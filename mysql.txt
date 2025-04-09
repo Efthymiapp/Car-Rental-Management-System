@@ -1,0 +1,165 @@
+-- SQLINES DEMO *** le SQL Developer Data Modeler 23.1.0.087.0806
+-- SQLINES DEMO *** -06-10 17:49:38 EEST
+-- SQLINES DEMO *** le Database 12c
+-- SQLINES DEMO *** le Database 12c
+
+
+
+-- SQLINES DEMO *** no DDL - MDSYS.SDO_GEOMETRY
+
+-- SQLINES DEMO *** no DDL - XMLTYPE
+
+-- SQLINES LICENSE FOR EVALUATION USE ONLY
+CREATE TABLE branch (
+    branchid     VARCHAR(20) NOT NULL,
+    city         VARCHAR(50) NOT NULL,
+    address      VARCHAR(255) NOT NULL,
+    phone_number VARCHAR(20) NOT NULL
+);
+
+ALTER TABLE branch ADD CONSTRAINT branch_pk PRIMARY KEY ( branchid );
+
+-- SQLINES LICENSE FOR EVALUATION USE ONLY
+CREATE TABLE car (
+    type                 VARCHAR(50) NOT NULL,
+    number_of_seats      INTEGER NOT NULL,
+    number_of_doors      INTEGER NOT NULL,
+    conventionality      DOUBLE NOT NULL,
+    gasoline_powered     DOUBLE NOT NULL,
+    diesel_powered       DOUBLE NOT NULL,
+    electric             DOUBLE NOT NULL,
+    hybrid               DOUBLE NOT NULL,
+    rental_price_per_day DECIMAL(10, 2) NOT NULL,
+    carid                VARCHAR(17) NOT NULL,
+    branch_branchid      VARCHAR(20) NOT NULL
+);
+
+ALTER TABLE car ADD CONSTRAINT car_pk PRIMARY KEY ( carid );
+
+-- SQLINES LICENSE FOR EVALUATION USE ONLY
+CREATE TABLE customer (
+    first_name     VARCHAR(50) NOT NULL,
+    last_name      VARCHAR(50) NOT NULL,
+    email          VARCHAR(100) NOT NULL,
+    license_number VARCHAR(50) NOT NULL,
+    phone_number   VARCHAR(20) NOT NULL,
+    mobile_number  VARCHAR(20) NOT NULL,
+    customerid     VARCHAR(20) NOT NULL
+);
+
+ALTER TABLE customer ADD CONSTRAINT customer_pk PRIMARY KEY ( customerid );
+
+-- SQLINES LICENSE FOR EVALUATION USE ONLY
+CREATE TABLE reservation (
+    pickup_location         VARCHAR(15) NOT NULL,
+    pickup_point_location   VARCHAR(15) NOT NULL,
+    pickup_date             DATETIME NOT NULL,
+    pickup_time             DATETIME NOT NULL,
+    return_location         VARCHAR(15),
+    return_date             DATETIME NOT NULL,
+    return_time             DATETIME NOT NULL,
+    car_type                VARCHAR(50),
+    costumer_email          VARCHAR(4000) NOT NULL,
+    costumer_license_number VARCHAR(4000) NOT NULL,
+    costumer_mobile_number  INTEGER NOT NULL,
+    costumer_phone_number   INTEGER NOT NULL,
+    renting_car_id          DOUBLE NOT NULL,
+    reservationid           VARCHAR(20) NOT NULL,
+    total_price             DECIMAL(10, 2) NOT NULL,
+    customer_customerid     VARCHAR(20) NOT NULL,
+    car_carid2              VARCHAR(17)
+);
+
+-- SQLINES LICENSE FOR EVALUATION USE ONLY
+CREATE UNIQUE INDEX renting_car__idx ON
+    reservation (
+        costumer_email
+    ASC,
+        costumer_license_number
+    ASC,
+        costumer_mobile_number
+    ASC,
+        costumer_phone_number
+    ASC );
+
+ALTER TABLE reservation ADD CONSTRAINT reservation_pk PRIMARY KEY ( reservationid );
+
+ALTER TABLE reservation ADD CONSTRAINT renting_car_pk UNIQUE ( renting_car_id );
+
+ALTER TABLE car
+    ADD CONSTRAINT car_branch_fk FOREIGN KEY ( branch_branchid )
+        REFERENCES branch ( branchid );
+
+ALTER TABLE reservation
+    ADD CONSTRAINT reservation_car_fk FOREIGN KEY ( car_carid2 )
+        REFERENCES car ( carid );
+
+ALTER TABLE reservation
+    ADD CONSTRAINT reservation_customer_fk FOREIGN KEY ( customer_customerid )
+        REFERENCES customer ( customerid );
+
+CALL CreateSequence('reservation_renting_car_id_seq', 1, 1);
+
+-- SQLINES LICENSE FOR EVALUATION USE ONLY
+DROP TRIGGER IF EXISTS reservation_renting_car_id_trg;
+
+DELIMITER //
+
+CREATE TRIGGER reservation_renting_car_id_trg BEFORE
+    INSERT ON reservation
+    FOR EACH ROW
+    WHEN ( new.renting_car_id IS NULL )
+BEGIN
+    set new.renting_car_id = nextval('reservation_renting_car_id_seq');
+END;
+//
+
+DELIMITER ;
+
+
+
+
+
+-- SQLINES DEMO *** per Data Modeler Summary Report: 
+-- 
+-- SQLINES DEMO ***                         4
+-- SQLINES DEMO ***                         1
+-- SQLINES DEMO ***                         8
+-- SQLINES DEMO ***                         0
+-- SQLINES DEMO ***                         0
+-- SQLINES DEMO ***                         0
+-- SQLINES DEMO *** DY                      0
+-- SQLINES DEMO ***                         0
+-- SQLINES DEMO ***                         0
+-- SQLINES DEMO ***                         1
+-- SQLINES DEMO ***                         0
+-- SQLINES DEMO ***  TYPE                   0
+-- SQLINES DEMO ***  TYPE                   0
+-- SQLINES DEMO ***  TYPE BODY              0
+-- SQLINES DEMO ***                         0
+-- SQLINES DEMO ***                         0
+-- SQLINES DEMO ***                         0
+-- SQLINES DEMO ***                         0
+-- SQLINES DEMO ***                         0
+-- SQLINES DEMO ***                         0
+-- SQLINES DEMO ***                         0
+-- SQLINES DEMO *** EGMENT                  0
+-- SQLINES DEMO ***                         1
+-- SQLINES DEMO *** ED VIEW                 0
+-- SQLINES DEMO *** ED VIEW LOG             0
+-- SQLINES DEMO ***                         0
+-- SQLINES DEMO ***                         0
+-- SQLINES DEMO ***                         0
+-- 
+-- SQLINES DEMO ***                         0
+-- SQLINES DEMO ***                         0
+-- 
+-- SQLINES DEMO ***                         0
+-- SQLINES DEMO ***                         0
+-- 
+-- SQLINES DEMO ***                         0
+-- SQLINES DEMO *** A                       0
+-- SQLINES DEMO *** T                       0
+-- 
+-- SQLINES DEMO ***                         0
+-- SQLINES DEMO ***                         0
